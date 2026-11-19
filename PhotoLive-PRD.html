@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhotoLive 产品需求文档 v0.1</title>
+<style>
+  :root{
+    --bg:#f6f3ee;
+    --card:#ffffff;
+    --ink:#1b1a17;
+    --muted:#6d675f;
+    --line:#e3ddd2;
+    --accent:#0d5c4f;
+    --accent-soft:#e7f1ed;
+    --warm:#b4632a;
+    --warm-soft:#fbf0e6;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+    font-size:15px;line-height:1.78;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+
+  /* ---------- hero ---------- */
+  .hero{padding:62px 0 40px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:12px;letter-spacing:.2em;color:var(--accent);font-weight:700}
+  h1{font-size:clamp(30px,4.2vw,44px);line-height:1.22;margin:16px 0 12px;letter-spacing:-.02em;font-weight:800}
+  .sub{color:var(--muted);max-width:660px;font-size:16px;margin:0}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}
+  .chip{
+    font-size:12.5px;padding:5px 11px;border-radius:999px;background:var(--card);
+    border:1px solid var(--line);color:var(--muted)
+  }
+  .chip strong{color:var(--ink);font-weight:600}
+
+  /* ---------- layout ---------- */
+  .layout{display:grid;grid-template-columns:206px minmax(0,1fr);gap:56px;padding:44px 0 96px}
+  .toc{position:sticky;top:26px;align-self:start;font-size:13.5px}
+  .toc-title{font-size:11px;letter-spacing:.18em;color:var(--muted);font-weight:700;margin-bottom:12px}
+  .toc a{display:block;padding:5px 0 5px 12px;color:var(--muted);border-left:2px solid transparent}
+  .toc a:hover{color:var(--accent);border-left-color:var(--line);text-decoration:none}
+  .toc a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+  main{min-width:0}
+  section{margin-bottom:58px;scroll-margin-top:24px}
+  h2{
+    font-size:23px;margin:0 0 8px;font-weight:750;letter-spacing:-.01em;
+    display:flex;align-items:baseline;gap:10px
+  }
+  h2 .no{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.1em}
+  .lead{color:var(--muted);margin:0 0 22px;font-size:14.5px}
+  h3{font-size:17px;margin:30px 0 10px;font-weight:700;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  h4{font-size:13px;margin:18px 0 7px;color:var(--accent);font-weight:700;letter-spacing:.04em}
+  p{margin:0 0 12px}
+  ul,ol{margin:0 0 12px;padding-left:20px}
+  li{margin:4px 0}
+  code{background:#f0ece4;padding:1px 5px;border-radius:4px;font-size:12.5px;font-family:ui-monospace,Consolas,monospace}
+
+  /* ---------- cards & tables ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px}
+  .note{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0;font-size:14px}
+  .note b{color:var(--accent)}
+  .warn{background:var(--warm-soft);border-left:3px solid var(--warm);border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0;font-size:14px}
+  .warn b{color:var(--warm)}
+
+  table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th{background:#efeae1;text-align:left;font-weight:700;font-size:12.5px;letter-spacing:.02em;color:#4b463f;padding:10px 12px;border-bottom:1px solid var(--line)}
+  td{padding:10px 12px;border-bottom:1px solid #f0ece4;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even){background:#fcfaf7}
+  .nowrap{white-space:nowrap}
+
+  .badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:.04em}
+  .p0{background:var(--accent);color:#fff}
+  .p1{background:#efeae1;color:#6d675f}
+
+  /* ---------- flow ---------- */
+  .flow{display:flex;flex-direction:column;gap:14px;margin:20px 0 6px}
+  .lane{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .lane-label{width:74px;flex:none;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em}
+  .step{
+    background:var(--card);border:1px solid var(--line);border-radius:9px;
+    padding:7px 13px;font-size:13.5px;white-space:nowrap
+  }
+  .step.hl{background:var(--accent);border-color:var(--accent);color:#fff}
+  .arrow{color:#bdb5a8;font-size:13px}
+
+  /* ---------- FR blocks ---------- */
+  .fr{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px 18px;margin:16px 0}
+  .fr h3{margin:0 0 6px}
+  .fr-purpose{color:var(--muted);font-size:13.5px;margin-bottom:4px}
+  .fr h4:first-of-type{margin-top:14px}
+
+  /* ---------- prototype ---------- */
+  .proto{background:#efeae1;border-radius:var(--radius);padding:26px 20px 22px;margin:20px 0 8px}
+  .proto-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;padding:0 4px}
+  .proto-head h4{margin:0 0 3px;font-size:14px;color:var(--ink)}
+  .proto-head p{margin:0;font-size:12.5px;color:var(--muted)}
+  .proto-tip{font-size:12px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px;align-self:flex-start}
+  .phones{display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
+  .phone-box{width:290px;flex:none}
+  .phone-label{font-size:11.5px;font-weight:700;color:#4b463f;margin:0 0 8px 4px;letter-spacing:.06em}
+  .phone{
+    background:#111;border-radius:30px;padding:7px;box-shadow:0 12px 26px rgba(40,34,25,.18)
+  }
+  .screen{background:#fbfaf8;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;height:498px;position:relative}
+  .appbar{padding:12px 13px 9px;border-bottom:1px solid #efeae1;background:#fff}
+  .appbar .rt{font-size:13.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:6px}
+  .appbar .meta{font-size:11px;color:#8a8378;margin-top:2px}
+  .pill{font-size:10px;background:var(--accent-soft);color:var(--accent);padding:2px 7px;border-radius:99px;font-weight:700}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:11.5px;color:#6d675f;background:#fff;border-bottom:1px solid #f2eee7}
+  .tools{display:flex;gap:6px}
+  .tbtn{border:1px solid #e3ddd2;background:#fff;border-radius:6px;font-size:10.5px;padding:3px 7px;color:#6d675f;cursor:pointer}
+  .tbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:6px;align-content:start}
+  .tile{position:relative;border:0;padding:0;margin:0;border-radius:7px;overflow:hidden;cursor:pointer;aspect-ratio:1/1;background:#ddd}
+  .tile .ph{position:absolute;inset:0;display:block}
+  .tile::after{content:"";position:absolute;inset:0;border:2.5px solid transparent;border-radius:7px;transition:.15s}
+  .tile.on::after{border-color:var(--accent)}
+  .tile .chk{
+    position:absolute;right:5px;bottom:5px;width:19px;height:19px;border-radius:50%;
+    background:rgba(255,255,255,.82);border:1.5px solid rgba(0,0,0,.18);
+    display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;font-weight:800
+  }
+  .tile.on .chk{background:var(--accent);border-color:var(--accent);color:#fff}
+  .tile .idx{position:absolute;left:5px;top:4px;font-size:9.5px;color:rgba(255,255,255,.92);text-shadow:0 1px 2px rgba(0,0,0,.35);letter-spacing:.03em}
+  .bottom{padding:9px 12px;border-top:1px solid #efeae1;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11.5px}
+  .bottom b{font-size:13px;color:var(--accent)}
+  .dl{border:0;background:var(--accent);color:#fff;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:700;cursor:pointer}
+  .dl[disabled]{background:#c9c2b6;cursor:not-allowed}
+  .empty{grid-column:1/-1;text-align:center;color:#a39b8d;font-size:12px;padding:60px 12px;line-height:1.8}
+  .stat{display:flex;gap:8px;padding:10px 12px;background:#fff;border-bottom:1px solid #f2eee7}
+  .stat div{flex:1;background:#fbf8f3;border:1px solid #efeae1;border-radius:8px;padding:7px 8px;text-align:center}
+  .stat b{display:block;font-size:17px;color:var(--accent);line-height:1.2}
+  .stat span{font-size:10px;color:#8a8378}
+  .upl{margin:10px 12px 0;border:1.5px dashed #cfc7b8;border-radius:9px;text-align:center;font-size:11px;color:#8a8378;padding:9px;cursor:pointer;background:#fdfcf9}
+  .upl:hover{border-color:var(--accent);color:var(--accent)}
+  .toast{
+    position:absolute;left:50%;bottom:64px;transform:translateX(-50%);
+    background:rgba(27,26,23,.9);color:#fff;font-size:11px;padding:7px 13px;border-radius:20px;
+    opacity:0;transition:.25s;pointer-events:none;white-space:nowrap;max-width:86%
+  }
+  .toast.show{opacity:1;bottom:72px}
+
+  /* ---------- misc ---------- */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .kv{font-size:13.5px}
+  .kv dt{font-weight:700;color:#4b463f;margin-top:10px}
+  .kv dd{margin:2px 0 0;color:var(--muted)}
+  footer{border-top:1px solid var(--line);padding:26px 0 50px;color:var(--muted);font-size:12.5px}
+
+  @media (max-width:940px){
+    .layout{grid-template-columns:1fr;gap:0;padding-top:28px}
+    .toc{display:none}
+    .two-col{grid-template-columns:1fr}
+    .hero{padding-top:40px}
+  }
+  @media print{
+    .toc,.proto{display:none}
+    body{background:#fff}
+    .layout{grid-template-columns:1fr}
+    .fr,.card,table{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">PRODUCT REQUIREMENTS DOCUMENT</div>
+    <h1>PhotoLive 照片直播平台</h1>
+    <p class="sub">面向摄影师的现场交付工具：现场上传，客户扫码即看、随手挑片，摄影师直接拿到可导入修图软件的文件名清单。</p>
+    <div class="chips">
+      <span class="chip">版本 <strong>v0.1</strong></span>
+      <span class="chip">日期 <strong>2026-11-16</strong></span>
+      <span class="chip">状态 <strong>待评审</strong></span>
+      <span class="chip">范围 <strong>MVP / P0</strong></span>
+      <span class="chip">目标用户 <strong>摄影师（B 端）</strong></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav class="toc" id="toc">
+    <div class="toc-title">目录</div>
+    <a href="#s1">1 背景与目标</a>
+    <a href="#s2">2 角色与核心对象</a>
+    <a href="#s3">3 范围边界</a>
+    <a href="#s4">4 核心流程</a>
+    <a href="#s5">5 功能需求</a>
+    <a href="#s6">6 共享规则与异常</a>
+    <a href="#s7">7 已确认技术约束</a>
+    <a href="#s8">8 待定问题</a>
+  </nav>
+
+  <main>
+
+    <!-- 1 -->
+    <section id="s1">
+      <h2><span class="no">01</span>背景与目标</h2>
+      <p class="lead">问题不在“能不能看到照片”，而在“照片到达客户手里的链路太长，挑片又靠口头沟通”。</p>
+
+      <div class="card">
+        <p style="margin:0"><b>现场拍摄</b> → 照片留在摄影师设备 → <b>导出到电脑</b> → 上传网盘 / 微信发送 → 客户等待并下载 → <b>客户口头描述“第几张”</b> → 摄影师人工筛图 → <b>再发一次</b></p>
+        <p style="margin:10px 0 0;color:var(--muted);font-size:13.5px">一次活动至少两次文件搬运、两轮沟通，且客户在最有热情的现场时段看不到照片。</p>
+      </div>
+
+      <h3>产品决策</h3>
+      <p>把“交付”和“选片”合并进拍摄现场同一个链接：摄影师建一个活动房间，照片上传完成即可见；客户免注册扫码浏览并标记喜欢的照片；标记结果以文件名清单的形式回到摄影师，直接用于修图软件筛选。</p>
+
+      <h3>预期结果（可观察，不设虚构指标）</h3>
+      <ul>
+        <li>客户全程不需要安装应用、不需要注册账号，只凭链接和访问码完成浏览、挑片、下载。</li>
+        <li>客户完成挑片后，摄影师无需再问“你要哪几张”，直接获得带原始文件名的选中清单。</li>
+        <li>一场活动的上传动作只发生一次，后续交付与挑片都由同一个房间承载。</li>
+      </ul>
+    </section>
+
+    <!-- 2 -->
+    <section id="s2">
+      <h2><span class="no">02</span>角色与核心对象</h2>
+      <p class="lead">全局只有两个真实角色，客户完全免注册——这是本产品最重要的信任设计。</p>
+
+      <h3>角色</h3>
+      <table>
+        <thead>
+          <tr><th style="width:16%">角色</th><th style="width:22%">身份方式</th><th>职责</th><th style="width:22%">不能做的事</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>摄影师</b></td><td>邮箱 + 密码登录</td><td>创建房间、上传照片、删除照片、查看选中结果、导出清单、结束房间</td><td>不能代替客户标记照片</td></tr>
+          <tr><td><b>客户 / 访客</b></td><td>房间链接 + 访问码，免注册</td><td>浏览展示墙、标记 / 取消标记、下载自己选中的照片</td><td>不能上传（P0）、不能删除、不能看其他房间</td></tr>
+        </tbody>
+      </table>
+
+      <h3>核心对象</h3>
+      <table>
+        <thead>
+          <tr><th style="width:13%">对象</th><th style="width:31%">定义</th><th>关键属性</th><th style="width:22%">生命周期</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>房间</b></td><td>一次活动的照片集合，是分享和权限的最小单位</td><td>名称、活动日期、访问码、是否允许下载、状态、创建时间</td><td>进行中 → 已结束 → 已删除</td></tr>
+          <tr><td><b>照片</b></td><td>一张原始文件及其派生缩略图</td><td>原文件名、拍摄时间、上传时间、处理状态、上传者角色</td><td>处理中 → 可看；处理中 → 失败</td></tr>
+          <tr><td><b>标记</b></td><td>某位客户对某张照片的选中关系</td><td>访客标识、照片、标记时间</td><td>未选 ↔ 已选；房间结束后冻结</td></tr>
+          <tr><td><b>选中清单</b></td><td>由标记派生的导出结果，不单独持久化</td><td>原始文件名、拍摄时间、标记时间</td><td>每次导出即时生成</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note"><b>信任边界：</b>房间链接 + 访问码就是客户的全部凭证。产品不承诺企业级权限控制；摄影师通过“重置访问码”和“结束房间”控制访问范围。</div>
+    </section>
+
+    <!-- 3 -->
+    <section id="s3">
+      <h2><span class="no">03</span>范围边界</h2>
+      <p class="lead">P0 只保证一条最小完整旅程跑通，其余能力明确后置。</p>
+
+      <h3>P0 最小完整旅程</h3>
+      <div class="flow">
+        <div class="lane">
+          <span class="lane-label">摄影师</span>
+          <span class="step">登录</span><span class="arrow">→</span>
+          <span class="step">创建房间</span><span class="arrow">→</span>
+          <span class="step">批量上传</span><span class="arrow">→</span>
+          <span class="step">看选中结果</span><span class="arrow">→</span>
+          <span class="step">导出清单</span><span class="arrow">→</span>
+          <span class="step">结束房间</span>
+        </div>
+        <div class="lane">
+          <span class="lane-label">客户</span>
+          <span class="step">扫码</span><span class="arrow">→</span>
+          <span class="step">输访问码</span><span class="arrow">→</span>
+          <span class="step hl">浏览展示墙</span><span class="arrow">→</span>
+          <span class="step hl">标记喜欢的</span><span class="arrow">→</span>
+          <span class="step">下载已选</span>
+        </div>
+      </div>
+
+      <h3>P0 内的关键判断</h3>
+      <table>
+        <thead><tr><th style="width:26%">能力</th><th>决策与理由</th></tr></thead>
+        <tbody>
+          <tr><td>客户下载</td><td><b>P0 支持</b>下载“自己标记过的照片”原图（ZIP）。客户挑完必须能把图拿走，否则闭环仍断在“再等摄影师发一次”。水印、限次、防盗链属于 P1。</td></tr>
+          <tr><td>HEIC / HEIF</td><td><b>P0 支持</b>。iPhone 摄影师与客户大量使用 HEIC，不处理会直接导致“打开是裂图”。服务端统一转为 JPG 后保存、预览与下载（不再单独保留 HEIC 原文件，避免下载到无法打开的图片）。</td></tr>
+          <tr><td>上传端</td><td><b>P0 只做 Web</b>：电脑浏览器拖拽批量上传优先，手机浏览器可上传。不做原生 App / 桌面客户端。</td></tr>
+          <tr><td>实时性</td><td><b>P0 做页面内自动更新</b>：已打开的页面在数秒内出现新照片，不做系统推送、短信、邮件通知。</td></tr>
+          <tr><td>访客上传</td><td><b>P1 已实现</b>：房间默认关闭，摄影师可在房间详情开启；客户上传的照片标注来源，摄影师可删除。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>P0 明确不做</h3>
+      <p style="color:var(--muted)">水印与防盗、付费与套餐、人脸聚类找自己、原生 App、多摄影师协作、在线精修下单、评论点赞、长期归档。</p>
+
+      <h3>P1 候选</h3>
+      <p style="color:var(--muted)">预览图水印、下载次数限制、照片点赞与评论、AI 按人脸/场景聚类、多客户分组选片、精修加购。</p>
+    </section>
+
+    <!-- 4 -->
+    <section id="s4">
+      <h2><span class="no">04</span>核心流程</h2>
+      <p class="lead">一个房间从创建到结束的完整时序，以及客户侧的三步动作。</p>
+
+      <table>
+        <thead><tr><th style="width:12%">阶段</th><th style="width:30%">摄影师动作</th><th style="width:30%">客户可见状态</th><th>系统行为</th></tr></thead>
+        <tbody>
+          <tr><td class="nowrap"><b>T0 建房</b></td><td>填写名称、日期，生成房间</td><td>—（尚无链接可分享）</td><td>生成访问码、房间链接与二维码</td></tr>
+          <tr><td class="nowrap"><b>T1 上传</b></td><td>拖入一批照片</td><td>已进入页面的客户看到“处理中”占位</td><td>逐张上传 → 转码缩略图 → 可看</td></tr>
+          <tr><td class="nowrap"><b>T2 分享</b></td><td>把链接/二维码发给客户</td><td>输入访问码进入展示墙</td><td>校验访问码，建立访客会话</td></tr>
+          <tr><td class="nowrap"><b>T3 挑片</b></td><td>继续补传照片</td><td>边看边标记，底部实时显示已选数量</td><td>标记即时保存，摄影师侧同步计数</td></tr>
+          <tr><td class="nowrap"><b>T4 收口</b></td><td>查看选中结果并导出清单</td><td>可下载已选原图</td><td>按文件名生成 ZIP 与 CSV</td></tr>
+          <tr><td class="nowrap"><b>T5 结束</b></td><td>结束房间</td><td>只读，不能新增标记，仍可下载</td><td>冻结标记，进入保留期</td></tr>
+        </tbody>
+      </table>
+
+      <div class="warn"><b>关键约束：</b>客户在 T3 期间不需要摄影师做任何操作。摄影师补传照片时，客户页面必须自动出现新图，不能要求客户刷新或重新输码。</div>
+    </section>
+
+    <!-- 5 -->
+    <section id="s5">
+      <h2><span class="no">05</span>功能需求</h2>
+      <p class="lead">以下为 P0 全部功能，每条需求覆盖触发、规则、结果与异常。</p>
+
+      <div class="proto">
+        <div class="proto-head">
+          <div>
+            <h4>可交互原型 · 客户挑片与摄影师结果</h4>
+            <p>左侧为客户手机视图，右侧为摄影师房间详情。标记数据在两台设备间实时同步。</p>
+          </div>
+          <div class="proto-tip">点击照片切换选中 · 点“上传”模拟摄影师补传</div>
+        </div>
+        <div class="phones">
+
+          <!-- guest -->
+          <div class="phone-box">
+            <div class="phone-label">客户（免注册 · 手机 H5）</div>
+            <div class="phone">
+              <div class="screen">
+                <div class="appbar">
+                  <div class="rt"><span>洱海旅拍 · 11.16</span><span class="pill">进行中</span></div>
+                  <div class="meta">摄影师 阿泽 · 共 12 张</div>
+                </div>
+                <div class="toolbar">
+                  <span>拍摄时间正序</span>
+                  <div class="tools">
+                    <button class="tbtn" id="filterBtn">只看已选</button>
+                    <button class="tbtn" id="sortBtn">倒序</button>
+                  </div>
+                </div>
+                <div class="grid" id="guestGrid"></div>
+                <div class="bottom">
+                  <span>已选 <b id="guestCount">0</b> / <span id="guestTotal">12</span></span>
+                  <button class="dl" id="dlBtn" disabled>下载已选</button>
+                </div>
+                <div class="toast" id="toast1"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- photographer -->
+          <div class="phone-box">
+            <div class="phone-label">摄影师（房间详情 · 桌面/手机）</div>
+            <div class="phone">
+              <div class="screen">
+                <div class="appbar">
+                  <div class="rt"><span>洱海旅拍 · 11.16</span><span class="pill">进行中</span></div>
+                  <div class="meta">链接已复制 · 访问码 384716</div>
+                </div>
+                <div class="stat">
+                  <div><b id="pTotal">12</b><span>照片</span></div>
+                  <div><b id="pSelected">0</b><span>已选</span></div>
+                  <div><b>0</b><span>处理中</span></div>
+                </div>
+                <div class="upl" id="uploadBtn">＋ 模拟上传 2 张（拖拽/批量）</div>
+                <div class="toolbar">
+                  <span>仅看已选</span>
+                  <div class="tools"><button class="tbtn" id="exportBtn">导出清单</button></div>
+                </div>
+                <div class="grid" id="proGrid"></div>
+                <div class="bottom">
+                  <span>选中清单 <b id="proCount">0</b> 张</span>
+                  <button class="dl" id="exportBtn2">导出 CSV</button>
+                </div>
+                <div class="toast" id="toast2"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FR-01 -->
+      <div class="fr">
+        <h3>FR-01 摄影师账号与登录 <span class="badge p0">P0</span></h3>
+        <p class="fr-purpose">让房间和照片有明确归属，同时把客户的注册成本降为零。</p>
+        <h4>触发与入口</h4>
+        <p>首次使用进入摄影师后台；登录态过期后再次访问房间管理页。</p>
+        <h4>处理规则</h4>
+        <ul>
+          <li>注册字段：邮箱、密码。密码至少 8 位，需同时包含字母与数字；邮箱全局唯一。</li>
+          <li>不做邮箱验证、短信验证、第三方登录（单实例部署，不依赖外部服务）。</li>
+          <li>登录态保持 7 天；主动退出立即失效。</li>
+          <li>连续 5 次密码错误，该账号锁定 15 分钟。</li>
+        </ul>
+        <h4>结果与状态变化</h4>
+        <p>登录成功进入“我的房间”列表，展示房间名称、日期、照片数、已选数、状态与新建入口。</p>
+        <h4>异常</h4>
+        <ul>
+          <li>邮箱已注册：提示“该邮箱已注册，请直接登录”。</li>
+          <li>密码错误：统一提示“邮箱或密码不正确”，不区分具体原因。</li>
+          <li>账号锁定：显示剩余锁定时间，倒计时结束后可重试。</li>
+        </ul>
+      </div>
+
+      <!-- FR-02 -->
+      <div class="fr">
+        <h3>FR-02 创建与管理活动房间 <span class="badge p0">P0</span></h3>
+        <p class="fr-purpose">房间是分享单位，客户拿到的是“一个房间”，而不是一堆散图。</p>
+        <h4>字段</h4>
+        <table>
+          <thead><tr><th style="width:18%">字段</th><th style="width:12%">必填</th><th>规则</th></tr></thead>
+          <tbody>
+            <tr><td>房间名称</td><td>是</td><td>2–40 字，用于客户页面标题</td></tr>
+            <tr><td>活动日期</td><td>是</td><td>默认当天，可改；仅用于展示与列表排序</td></tr>
+            <tr><td>访问码</td><td>是</td><td>系统生成 6 位数字；可改为 4–8 位字母数字；进行中的房间内唯一</td></tr>
+            <tr><td>允许客户下载</td><td>是</td><td>默认开启；关闭后客户只能看与标记，下载入口隐藏</td></tr>
+            <tr><td>备注</td><td>否</td><td>≤200 字，仅摄影师可见</td></tr>
+          </tbody>
+        </table>
+        <h4>处理规则</h4>
+        <ul>
+          <li>创建成功即生成房间链接与二维码，可一键复制链接、保存二维码图片。</li>
+          <li>访问码可重置；重置后旧码立即失效，已进入的客户会话不被强制踢出。</li>
+          <li>房间数量不限制，列表按活动日期倒序排列。</li>
+        </ul>
+        <h4>结果与状态变化</h4>
+        <p>房间进入“进行中”，可上传照片。点击“结束房间”需二次确认，结束后转为只读。</p>
+        <h4>异常</h4>
+        <ul>
+          <li>访问码被占用：提示更换，不自动顺延。</li>
+          <li>删除房间：必须输入房间名称确认，照片、标记与文件一并删除且不可恢复。</li>
+          <li>重复提交创建：同一次提交只生成一个房间。</li>
+        </ul>
+      </div>
+
+      <!-- FR-03 -->
+      <div class="fr">
+        <h3>FR-03 照片上传与处理 <span class="badge p0">P0</span></h3>
+        <p class="fr-purpose">把“摄影师传得动、传得完整”作为第一优先级，任何失败都不能拖垮整批。</p>
+        <h4>触发与入口</h4>
+        <p>房间详情页“上传照片”。支持拖拽到区域、点击选择文件、一次选择多个文件。</p>
+        <h4>限制</h4>
+        <table>
+          <thead><tr><th style="width:24%">项目</th><th>规则</th></tr></thead>
+          <tbody>
+            <tr><td>格式</td><td>jpg / jpeg / png / heic / heif / webp；其他格式拒绝并列出文件名</td></tr>
+            <tr><td>单张大小</td><td>≤50MB [Assumption, TBD]</td></tr>
+            <tr><td>单次数量</td><td>≤300 张 [Assumption, TBD]；超出提示分批上传</td></tr>
+            <tr><td>单房间总数</td><td>建议 ≤3000 张 [Assumption, TBD]；超出提示新建房间</td></tr>
+          </tbody>
+        </table>
+        <h4>处理规则</h4>
+        <ul>
+          <li>逐张上传，客户端并发 3 个任务；每张独立进度，单张失败不影响其他照片。</li>
+          <li>HEIC / HEIF 自动转为 JPG 用于预览与下载；为保证客户在任何设备都能打开，仅保留转换后的 JPG。</li>
+          <li>服务端生成两档缩略图：列表用 480px、全屏预览用 1600px；处理完成前该照片在展示墙显示“处理中”占位。</li>
+          <li>重复判定：同一房间内“原文件名 + 文件大小”均相同视为重复，默认跳过，上传结束后汇总提示。</li>
+          <li>同名不同内容：存储名追加序号，展示名同步追加序号并提示，避免导出清单时撞名。</li>
+          <li>排序时间取 EXIF 拍摄时间；缺失时取上传时间。时区原样使用，不做换算。</li>
+        </ul>
+        <h4>结果与状态变化</h4>
+        <p>照片处理完成后立即可见，房间详情的照片数与客户的展示墙同步增加。上传者是摄影师本人时标记为“摄影师”。</p>
+        <h4>异常</h4>
+        <ul>
+          <li>磁盘空间不足：阻止本次上传并提示剩余空间，已成功的照片保留。</li>
+          <li>网络中断：已完成的照片不回滚，未完成项显示“重试”。</li>
+          <li>图片处理失败：照片标记为“失败”，可单张或批量重新处理；失败照片不进入客户展示墙。</li>
+        </ul>
+      </div>
+
+      <!-- FR-04 -->
+      <div class="fr">
+        <h3>FR-04 客户展示墙 <span class="badge p0">P0</span></h3>
+        <p class="fr-purpose">客户在手机上第一眼就要看到“刚拍完的照片”，而不是“一个等待下载的网盘”。</p>
+        <h4>触发与入口</h4>
+        <p>客户打开房间链接。无访问码链接直接进入；带码链接需先输入访问码。</p>
+        <h4>处理规则</h4>
+        <ul>
+          <li>首次进入需输入访问码；同一浏览器后续访问不再重复校验。</li>
+          <li>访问码连续错误 5 次，该浏览器锁定 10 分钟。</li>
+          <li>自适应网格：手机 2 列、平板 3 列、桌面 4 列；点击进入全屏预览，可左右滑动切换。</li>
+          <li>默认按拍摄时间正序，支持切换倒序；切换不影响已标记状态。</li>
+          <li>列表只加载缩略图，滚动懒加载；全屏才加载 1600px 预览图。</li>
+          <li>页面已打开时，新照片在 3 秒内出现，顶部提示“新增 N 张”，点击回到顶部 [Assumption, TBD]。</li>
+          <li>不展示 GPS 等位置信息，只展示拍摄时间。</li>
+        </ul>
+        <h4>结果与状态变化</h4>
+        <p>客户可浏览、标记、下载。房间结束后顶部出现“活动已结束，仅供查看”提示，标记按钮冻结。</p>
+        <h4>异常</h4>
+        <ul>
+          <li>空房间：显示“摄影师正在上传，请稍等片刻”，并自动等待新照片。</li>
+          <li>加载失败：单张显示重试占位，不阻塞其他照片。</li>
+          <li>访问码错误：提示剩余尝试次数；房间不存在或已删除时提示“房间已失效”。</li>
+        </ul>
+      </div>
+
+      <!-- FR-05 -->
+      <div class="fr">
+        <h3>FR-05 客户选片标记 <span class="badge p0">P0</span></h3>
+        <p class="fr-purpose">把“第几张、那个穿蓝衣服的”变成一次点击，并且不需要提交按钮。</p>
+        <h4>触发与入口</h4>
+        <p>客户在网格或全屏预览中点击照片右下角的选择按钮。</p>
+        <h4>处理规则</h4>
+        <ul>
+          <li>点击即切换选中 / 取消，即时保存，无“提交”动作。</li>
+          <li>同一客户对同一照片只保留一条标记；重复点击等价于取消后再选中。</li>
+          <li>底部固定条显示“已选 N / 共 M”；切换“只看已选”后仍显示全量计数。</li>
+          <li>客户首次进入房间时，浏览器本地生成访客标识；同一浏览器刷新、再次进入均保留标记。</li>
+          <li>换设备、换浏览器或清除浏览器数据后，标记不恢复 [Assumption, TBD]。</li>
+          <li>摄影师不能代替客户标记；标记不展示客户身份（P0 默认单客户场景）。</li>
+        </ul>
+        <h4>结果与状态变化</h4>
+        <p>标记即时反映在客户底部计数和摄影师房间详情的“已选”数量上；照片可被下载的前提是“已标记”。</p>
+        <h4>异常</h4>
+        <ul>
+          <li>标记的照片已被摄影师删除：提示“该照片已被移除”并刷新网格。</li>
+          <li>保存失败：界面先本地生效，后台自动重试 3 次；仍失败则回滚并在照片上提示重试。</li>
+          <li>房间已结束：标记按钮置灰，点击提示“活动已结束，无法修改选择”。</li>
+        </ul>
+      </div>
+
+      <!-- FR-06 -->
+      <div class="fr">
+        <h3>FR-06 客户下载已选照片 <span class="badge p0">P0</span></h3>
+        <p class="fr-purpose">让客户挑完就能直接拿走，避免“挑完还要再等一次发送”。</p>
+        <h4>触发与入口</h4>
+        <p>客户端底部“下载已选”。房间未开启“允许客户下载”时不显示该按钮。</p>
+        <h4>处理规则</h4>
+        <ul>
+          <li>只打包已标记照片的原图（HEIC 已转 JPG 的按转换后文件提供），生成 ZIP。</li>
+          <li>ZIP 内文件名保留原始文件名；重名文件使用上传时追加的序号。</li>
+          <li>打包在服务端后台执行，关闭页面后任务继续，重新进入可下载已完成文件；下载链接一次性有效。</li>
+          <li>未标记任何照片时按钮置灰。</li>
+        </ul>
+        <h4>结果与状态变化</h4>
+        <p>生成一次性下载链接，下载行为不改变标记状态。</p>
+        <h4>异常</h4>
+        <ul>
+          <li>打包失败：提示重试，不清空标记。</li>
+          <li>磁盘空间不足：提示稍后重试，并告知摄影师侧需要清理空间。</li>
+          <li>房间已删除：下载入口失效，提示“房间已失效”。</li>
+        </ul>
+      </div>
+
+      <!-- FR-07 -->
+      <div class="fr">
+        <h3>FR-07 摄影师查看与导出选中结果 <span class="badge p0">P0</span></h3>
+        <p class="fr-purpose">交付物必须是修图软件能直接用的东西——文件名，而不是截图。</p>
+        <h4>触发与入口</h4>
+        <p>房间详情页显示“已选”统计；点击进入“仅看已选”视图；点击“导出清单”。</p>
+        <h4>处理规则</h4>
+        <ul>
+          <li>“仅看已选”展示被标记照片的缩略图、原始文件名、拍摄时间、标记时间。</li>
+          <li>导出格式：CSV（原始文件名，拍摄时间，标记时间）与 TXT（每行一个原始文件名）。</li>
+          <li>文件名含逗号或引号时，CSV 使用标准引号转义，避免修图软件读取错列。</li>
+          <li>客户标记后，摄影师端在 5 秒内更新数量与列表 [Assumption, TBD]。</li>
+          <li>不展示客户身份信息；多客户分组选片属于 P1。</li>
+        </ul>
+        <h4>结果与状态变化</h4>
+        <p>导出生成即时文件，不改变房间状态；无标记时导出按钮置灰并提示“还没有客户选中照片”。</p>
+        <h4>异常</h4>
+        <ul>
+          <li>导出过程中标记发生变化：以导出那一刻的结果为准，并在文件名中附带时间戳。</li>
+          <li>照片已被删除：自动从清单剔除，不生成空行。</li>
+        </ul>
+      </div>
+
+      <!-- FR-08 -->
+      <div class="fr">
+        <h3>FR-08 房间结束与数据保留 <span class="badge p0">P0</span></h3>
+        <p class="fr-purpose">给房间一个明确的终点，避免“永远开着、越存越多”。</p>
+        <h4>触发与入口</h4>
+        <p>摄影师在房间详情点击“结束房间”，二次确认后生效。</p>
+        <h4>处理规则</h4>
+        <ul>
+          <li>结束后：客户页面只读，不能新增或取消标记；仍可浏览、仍可下载已标记照片。</li>
+          <li>默认保留 30 天 [Assumption, TBD]，到期后原图与缩略图删除，仅保留房间记录与标记统计。</li>
+          <li>摄影师可在结束后立即删除房间；删除需输入房间名称确认，不可恢复。</li>
+          <li>结束操作可逆（重新开启）[Assumption, TBD]，重新开启后客户可继续标记。</li>
+        </ul>
+        <h4>结果与状态变化</h4>
+        <p>房间状态变为“已结束”，列表中以灰色标识；客户页面顶部出现结束提示。</p>
+        <h4>异常</h4>
+        <ul>
+          <li>删除时仍有客户在浏览：该客户下次操作收到“房间已失效”。</li>
+          <li>删除时正在打包下载：打包任务终止并提示失败。</li>
+        </ul>
+      </div>
+
+      <!-- FR-09 -->
+      <div class="fr">
+        <h3>FR-09 访客上传 <span class="badge p1">P1 已实现</span></h3>
+        <p class="fr-purpose">把“同行互传”并入同一个房间，让摄影师不再是唯一的上传入口。</p>
+        <h4>触发与入口</h4>
+        <p>房间开启“允许访客上传”且状态为进行中时，客户相册页顶部出现“＋ 上传”。</p>
+        <h4>处理规则</h4>
+        <ul>
+          <li>默认关闭，由摄影师在房间详情中随时开启或关闭；关闭后接口直接拒绝上传。</li>
+          <li>客户上传与摄影师上传共用同一套格式、大小、去重、缩略图与排序规则。</li>
+          <li>访客照片进入同一展示墙，按拍摄时间排序，上传者标记为“guest”。</li>
+          <li>摄影师在照片网格中看到“访客”角标，可删除任何访客照片；删除后对应标记一并移除。</li>
+          <li>访客不能删除照片，也不能向未开启开关的房间上传。</li>
+          <li>可开启“访客照片需审核”：访客上传后进入待审核区，摄影师逐张“通过/拒绝”，仅通过的照片进入客户相册；拒绝会删除照片。</li>
+        </ul>
+        <h4>结果与状态变化</h4>
+        <p>上传成功后照片立即出现在所有已打开页面；开启审核时，访客照片先进入待审核区，通过后才展示。房间结束后上传入口隐藏，接口返回“活动已结束”。</p>
+        <h4>异常</h4>
+        <ul>
+          <li>未开启开关：403“摄影师未开放访客上传”。</li>
+          <li>重复文件：与摄影师上传一致，跳过并提示。</li>
+          <li>达到房间上限：409，提示新建房间。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="s6">
+      <h2><span class="no">06</span>共享规则与异常</h2>
+      <p class="lead">以下规则在全文档只定义一次，功能章节只引用，不重复描述。</p>
+
+      <h3>6.1 权限矩阵</h3>
+      <table>
+        <thead><tr><th style="width:34%">能力</th><th style="width:22%">摄影师</th><th style="width:22%">客户（已通过访问码）</th><th>未通过访问码</th></tr></thead>
+        <tbody>
+          <tr><td>进入房间管理</td><td>是</td><td>否</td><td>否</td></tr>
+          <tr><td>创建 / 结束 / 删除房间</td><td>是</td><td>否</td><td>否</td></tr>
+          <tr><td>上传照片</td><td>是</td><td>否（P0）</td><td>否</td></tr>
+          <tr><td>删除照片</td><td>是</td><td>否</td><td>否</td></tr>
+          <tr><td>浏览展示墙</td><td>是</td><td>是</td><td>否</td></tr>
+          <tr><td>标记 / 取消标记</td><td>否</td><td>是（房间进行中）</td><td>否</td></tr>
+          <tr><td>下载已选照片</td><td>是</td><td>是（房间开启下载时）</td><td>否</td></tr>
+          <tr><td>导出选中清单</td><td>是</td><td>否</td><td>否</td></tr>
+        </tbody>
+      </table>
+
+      <h3>6.2 状态与流转</h3>
+      <table>
+        <thead><tr><th style="width:16%">对象</th><th style="width:28%">状态</th><th>允许的流转</th></tr></thead>
+        <tbody>
+          <tr><td>房间</td><td>进行中 / 已结束 / 已删除</td><td>进行中 → 已结束（结束房间）；已结束 → 进行中（重新开启）；已结束 → 已删除（输入名称确认）；已删除为终态</td></tr>
+          <tr><td>照片</td><td>处理中 / 可看 / 失败</td><td>处理中 → 可看；处理中 → 失败；失败 → 处理中（重新处理）；可看 → 已删除</td></tr>
+          <tr><td>标记</td><td>未选 / 已选</td><td>未选 ↔ 已选；房间结束后冻结；照片删除时自动移除</td></tr>
+          <tr><td>访问会话</td><td>未验证 / 已验证 / 锁定</td><td>未验证 → 已验证（访问码正确）；未验证 → 锁定（连续 5 次错误，10 分钟）；锁定 → 未验证（到期）</td></tr>
+        </tbody>
+      </table>
+
+      <h3>6.3 命名与去重（唯一定义）</h3>
+      <ul>
+        <li>展示名与导出名一律使用原始文件名。</li>
+        <li>同房间同名不同内容：追加序号，格式为 <code>原名_2.jpg</code>，上传完成时提示摄影师。</li>
+        <li>同房间同名且同大小：判定为重复，跳过并计入“已跳过”统计。</li>
+        <li>存储内部分名与展示名解耦，任何内部重命名都不改变客户与摄影师看到的文件名。</li>
+      </ul>
+
+      <h3>6.4 时间规则</h3>
+      <ul>
+        <li>排序与展示用拍摄时间（EXIF）；缺失时用上传时间。</li>
+        <li>CSV 中的时间格式统一为 <code>YYYY-MM-DD HH:mm</code>，不附时区。</li>
+        <li>活动日期只影响房间列表排序，不影响照片排序。</li>
+      </ul>
+
+      <h3>6.5 统一提示语</h3>
+      <table>
+        <thead><tr><th style="width:32%">场景</th><th>提示文案</th></tr></thead>
+        <tbody>
+          <tr><td>访问码错误</td><td>访问码不正确，还可尝试 N 次</td></tr>
+          <tr><td>访问被锁定</td><td>尝试次数过多，请 N 分钟后再试</td></tr>
+          <tr><td>房间已结束</td><td>活动已结束，仅供查看</td></tr>
+          <tr><td>房间失效</td><td>房间已失效，请联系摄影师</td></tr>
+          <tr><td>磁盘空间不足</td><td>存储空间不足，请清理后重试</td></tr>
+          <tr><td>未选中照片</td><td>还没有选中照片</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7 -->
+    <section id="s7">
+      <h2><span class="no">07</span>已确认技术约束</h2>
+      <p class="lead">本节只记录已确认的选型及其对产品行为的约束，不展开实现方案。</p>
+
+      <table>
+        <thead><tr><th style="width:20%">层</th><th style="width:38%">已确认选择</th><th>对产品的影响</th></tr></thead>
+        <tbody>
+          <tr><td>后端</td><td>Go</td><td>单二进制部署，适合单实例 + 本地磁盘形态</td></tr>
+          <tr><td>数据库</td><td>SQLite 默认，可切换 MySQL</td><td>两种数据库下产品行为必须一致；并发写入能力受 SQLite 限制，标记写入需轻量</td></tr>
+          <tr><td>文件存储</td><td>本地文件存储，预留 OSS 存储桶适配</td><td>下载链接形态在本地与 OSS 下不同，页面不暴露具体存储地址；容量上限受本地磁盘约束</td></tr>
+          <tr><td>前端</td><td>Tailwind CSS + 原生 JavaScript，自适应 H5</td><td>单一响应式页面同时服务客户手机与摄影师桌面；不引入前端框架</td></tr>
+          <tr><td>HEIC 转换</td><td>依赖服务器上的 ffmpeg / ImageMagick / heif-convert，可用 <code>PHOTOLIVE_HEIC_CONVERTER</code> 指定</td><td>未安装转换器时 HEIC 上传返回明确错误，不影响 JPG / PNG / WebP</td></tr>
+          <tr><td>外部服务</td><td>不依赖邮件、短信、推送</td><td>无邮箱验证、无自助找回密码、无系统通知；实时性只能依赖页面内更新</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note"><b>约束结论：</b>“无外部服务”与“单实例”决定了 P0 必须放弃账号找回、消息通知与多实例横向扩展；这些能力一旦要做，需要先引入相应基础设施。</div>
+    </section>
+
+    <!-- 8 -->
+    <section id="s8">
+      <h2><span class="no">08</span>待定问题</h2>
+      <p class="lead">以下问题会改变权限或数据归属，需要评审时确认；其余细节已按假设处理并标注。</p>
+
+      <table>
+        <thead><tr><th style="width:8%">编号</th><th style="width:30%">问题</th><th style="width:30%">影响</th><th>当前默认处理</th></tr></thead>
+        <tbody>
+          <tr><td>Q1</td><td>客户换设备后能否恢复已选照片</td><td>需要引入手机号或轻量登录，影响整个免注册设计</td><td>不恢复，仅同浏览器保留</td></tr>
+          <tr><td>Q2</td><td>摄影师忘记密码如何处理</td><td>无邮件服务，无法自助找回</td><td>由部署方管理员重置</td></tr>
+          <tr><td>Q3</td><td>保留期与单房间容量上限</td><td>直接影响本地磁盘成本与清理策略</td><td>保留 30 天；单房间 3000 张</td></tr>
+          <tr><td>Q4</td><td>一场活动是否需要支持多客户分组选片</td><td>会改变标记与清单的数据结构</td><td>P0 按单客户设计</td></tr>
+          <tr><td>Q5</td><td>结束房间后能否重新开启</td><td>影响客户对“结束”的理解与访问控制</td><td>允许重新开启</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      PhotoLive PRD v0.1 · 2026-11-16 · 本文档定义产品行为，不包含接口与数据库设计。
+    </footer>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  var palette = [
+    'linear-gradient(135deg,#c9ded6,#7ea899)',
+    'linear-gradient(135deg,#e7d6c1,#c39a72)',
+    'linear-gradient(135deg,#cfd8e6,#8e9fc0)',
+    'linear-gradient(135deg,#e6d3cd,#bd8b80)',
+    'linear-gradient(135deg,#d8dfc8,#9aae7f)',
+    'linear-gradient(135deg,#e3dce9,#a99bc0)',
+    'linear-gradient(135deg,#d9e4e6,#8fadb3)',
+    'linear-gradient(135deg,#ecdcc9,#c9a273)',
+    'linear-gradient(135deg,#d7d2c6,#a79c86)',
+    'linear-gradient(135deg,#cfe3d9,#83ab9b)',
+    'linear-gradient(135deg,#e8d7d0,#c99a8c)',
+    'linear-gradient(135deg,#d3dbe8,#93a4c2)'
+  ];
+  var photos = [];
+  for (var i = 0; i < 12; i++) {
+    photos.push({
+      id: i + 1,
+      name: 'DSC_0' + (481 + i) + '.JPG',
+      time: '09:' + String(35 + i).slice(-2),
+      bg: palette[i % palette.length]
+    });
+  }
+
+  var selected = {};
+  var onlySelected = false;
+  var desc = false;
+
+  var guestGrid = document.getElementById('guestGrid');
+  var proGrid = document.getElementById('proGrid');
+  var guestCount = document.getElementById('guestCount');
+  var guestTotal = document.getElementById('guestTotal');
+  var proCount = document.getElementById('proCount');
+  var pTotal = document.getElementById('pTotal');
+  var pSelected = document.getElementById('pSelected');
+  var dlBtn = document.getElementById('dlBtn');
+  var filterBtn = document.getElementById('filterBtn');
+  var sortBtn = document.getElementById('sortBtn');
+
+  function list(){
+    var arr = photos.slice();
+    if (desc) arr.reverse();
+    return arr;
+  }
+  function selCount(){
+    return photos.filter(function(p){ return selected[p.id]; }).length;
+  }
+  function toast(el, msg){
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(function(){ el.classList.remove('show'); }, 2100);
+  }
+  function tileHTML(p){
+    return '<button class="tile ' + (selected[p.id] ? 'on' : '') + '" data-id="' + p.id + '" title="' + p.name + '">' +
+      '<span class="ph" style="background:' + p.bg + '"></span>' +
+      '<span class="idx">' + p.time + '</span>' +
+      '<span class="chk">✓</span></button>';
+  }
+  function render(){
+    var n = selCount();
+    guestTotal.textContent = photos.length;
+    pTotal.textContent = photos.length;
+    guestCount.textContent = n;
+    proCount.textContent = n;
+    pSelected.textContent = n;
+    dlBtn.disabled = n === 0;
+
+    var gList = onlySelected ? list().filter(function(p){ return selected[p.id]; }) : list();
+    guestGrid.innerHTML = gList.length
+      ? gList.map(tileHTML).join('')
+      : '<div class="empty">还没有选中照片<br>点击照片右下角的圆圈即可标记</div>';
+
+    proGrid.innerHTML = photos.length
+      ? list().filter(function(p){ return selected[p.id]; }).map(tileHTML).join('') ||
+        '<div class="empty">暂无选中<br>客户标记后会实时出现在这里</div>'
+      : '<div class="empty">还没有照片</div>';
+  }
+
+  function toggle(id){
+    selected[id] = !selected[id];
+    render();
+  }
+
+  guestGrid.addEventListener('click', function(e){
+    var t = e.target.closest('.tile');
+    if (t) toggle(+t.dataset.id);
+  });
+  proGrid.addEventListener('click', function(e){
+    var t = e.target.closest('.tile');
+    if (t) {
+      toast(document.getElementById('toast2'), '摄影师视角不能代客户标记');
+    }
+  });
+
+  filterBtn.addEventListener('click', function(){
+    onlySelected = !onlySelected;
+    filterBtn.classList.toggle('on', onlySelected);
+    render();
+  });
+  sortBtn.addEventListener('click', function(){
+    desc = !desc;
+    sortBtn.textContent = desc ? '正序' : '倒序';
+    render();
+  });
+  dlBtn.addEventListener('click', function(){
+    toast(document.getElementById('toast1'), '已打包 ' + selCount() + ' 张原图（ZIP）');
+  });
+
+  document.getElementById('uploadBtn').addEventListener('click', function(){
+    for (var k = 0; k < 2; k++) {
+      var id = photos.length + 1;
+      photos.push({
+        id: id,
+        name: 'DSC_0' + (481 + photos.length) + '.JPG',
+        time: '10:' + String(10 + photos.length).slice(-2),
+        bg: palette[(id - 1) % palette.length]
+      });
+    }
+    render();
+    toast(document.getElementById('toast2'), '已上传 2 张，处理完成后自动出现在客户页面');
+  });
+  function exportList(){
+    toast(document.getElementById('toast2'), '已导出选中清单 · ' + selCount() + ' 个文件名');
+  }
+  document.getElementById('exportBtn').addEventListener('click', exportList);
+  document.getElementById('exportBtn2').addEventListener('click', exportList);
+
+  render();
+
+  // TOC active state
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting) {
+          links.forEach(function(l){ l.classList.remove('active'); });
+          var idx = sections.indexOf(en.target);
+          if (idx > -1) links[idx].classList.add('active');
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+    sections.forEach(function(s){ if (s) io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>

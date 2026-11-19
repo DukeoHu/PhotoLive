@@ -1,0 +1,179 @@
+{{define "content"}}
+<section class="relative overflow-hidden bg-navy rounded-b-[52px] md:rounded-b-[80px]">
+  <div class="absolute inset-0" style="background:
+      radial-gradient(120% 90% at 18% 8%, rgba(84,116,168,.38) 0%, rgba(13,19,48,0) 55%),
+      radial-gradient(90% 70% at 88% 82%, rgba(196,142,88,.26) 0%, rgba(13,19,48,0) 60%),
+      linear-gradient(160deg, #141B3E 0%, #0D1330 48%, #080B1C 100%);"></div>
+  <div class="absolute inset-x-0 top-0 h-[70%] pointer-events-none" style="background:linear-gradient(180deg, rgba(6,10,20,.62) 0%, rgba(6,10,20,.34) 46%, rgba(6,10,20,.10) 78%, rgba(6,10,20,0) 100%);"></div>
+  <div class="absolute inset-0 opacity-[0.35] pointer-events-none" style="background-image:radial-gradient(rgba(248,246,243,.16) 1px, transparent 1px);background-size:26px 26px;mask-image:radial-gradient(80% 60% at 50% 20%, #000 0%, transparent 78%);-webkit-mask-image:radial-gradient(80% 60% at 50% 20%, #000 0%, transparent 78%);"></div>
+
+  <nav class="relative z-10 mx-auto flex h-[82px] max-w-[1280px] items-center justify-between px-6 md:px-10">
+    <a href="/" class="flex items-center gap-2.5">
+      <span class="h-[7px] w-[7px] rounded-full bg-paper/85"></span>
+      <span class="font-display text-[21px] tracking-[0.14em] text-paper">PHOTOLIVE</span>
+    </a>
+    <div class="hidden items-center gap-9 md:flex">
+      <a href="#flow" class="text-[13px] tracking-[0.08em] text-paper/80 hover:text-paper">流程</a>
+      <a href="#tool" class="text-[13px] tracking-[0.08em] text-paper/80 hover:text-paper">能力</a>
+      <a href="#start" class="text-[13px] tracking-[0.08em] text-paper/80 hover:text-paper">开始</a>
+    </div>
+    <div class="flex items-center gap-3">
+      {{if .User}}
+      <a href="/admin" class="glass flex h-10 items-center gap-3 rounded-full px-5 text-[12px] tracking-[0.1em] text-paper">
+        <span>进入工作台</span>
+        <span class="h-3 w-px bg-paper/30"></span>
+        <span class="text-paper/70">{{.User.Email}}</span>
+      </a>
+      {{else}}
+      <a href="/login" class="glass flex h-10 items-center gap-3 rounded-full px-5 text-[12px] tracking-[0.1em] text-paper">
+        <span>登录</span>
+        <span class="h-3 w-px bg-paper/30"></span>
+        <span class="text-paper/70">免费使用</span>
+      </a>
+      {{end}}
+    </div>
+  </nav>
+
+  <div class="relative z-10 mx-auto max-w-[1280px] px-6 pb-24 pt-16 text-center md:px-10 md:pb-32 md:pt-24">
+    <p class="mb-6 text-[11px] tracking-[0.32em] text-paper/55">PHOTO DELIVERY, IN REAL TIME</p>
+    <h1 class="font-display mx-auto text-[clamp(40px,7vw,92px)] leading-[1.08] text-paper md:whitespace-nowrap">拍完即看，挑完即走。</h1>
+    <div class="mx-auto mt-6 max-w-[600px]">
+      <p class="text-[15px] font-light leading-[1.8] text-paper/75">
+        给摄影师的现场交付工具。建一个房间，客户扫码就能看到刚拍的照片，随手标记喜欢的几张——
+        你拿到的不是一堆微信消息，而是一份可直接导入修图软件的文件名清单。
+      </p>
+    </div>
+    <div class="mt-11 flex flex-wrap items-center justify-center gap-4">
+      <a href="{{if .User}}/admin{{else}}/login{{end}}" class="btn-primary">
+        创建我的第一个房间
+        <svg width="17" height="10" viewBox="0 0 17 10" fill="none" aria-hidden="true">
+          <path d="M11.6 1 L15.8 5 L11.6 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15.4 5 H0.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </a>
+      <a href="#flow" class="btn-ghost">看看它怎么用</a>
+    </div>
+
+    <div class="mx-auto mt-16 flex max-w-[760px] flex-wrap items-center justify-center gap-x-10 gap-y-4 text-[11px] tracking-[0.14em] text-paper/45 md:mt-20">
+      <span>客户 0 安装 · 0 注册</span>
+      <span class="hidden h-3 w-px bg-paper/15 md:block"></span>
+      <span>上传完成即可见</span>
+      <span class="hidden h-3 w-px bg-paper/15 md:block"></span>
+      <span>原始文件名清单导出</span>
+    </div>
+  </div>
+</section>
+
+<section id="flow" class="mx-auto max-w-[1180px] px-6 py-20 md:px-10 md:py-28">
+  <div class="reveal">
+    <p class="text-[11px] tracking-[0.28em] text-paper/40">THE FLOW</p>
+    <h2 class="font-display mt-4 max-w-[820px] text-[clamp(32px,4.4vw,56px)] leading-[1.16] text-paper">
+      一条链接，替掉整条传图链路。
+    </h2>
+  </div>
+
+  <div class="mt-14 grid gap-4 md:grid-cols-3">
+    <div class="reveal rounded-4xl border border-paper/10 bg-card/60 p-8" style="animation-delay:.05s">
+      <p class="font-display text-[44px] leading-none text-paper/25">01</p>
+      <h3 class="mt-6 text-[16px] font-medium text-paper">建一个活动房间</h3>
+      <p class="mt-3 text-[13.5px] font-light leading-[1.8] text-paper/55">
+        房间名、日期、访问码。系统同时给你链接与二维码，发给客户就完成了分享。
+      </p>
+    </div>
+    <div class="reveal rounded-4xl border border-paper/10 bg-card/60 p-8" style="animation-delay:.15s">
+      <p class="font-display text-[44px] leading-none text-paper/25">02</p>
+      <h3 class="mt-6 text-[16px] font-medium text-paper">现场批量上传</h3>
+      <p class="mt-3 text-[13.5px] font-light leading-[1.8] text-paper/55">
+        拖入成批照片，自动生成缩略图、按拍摄时间排序。客户页面无需刷新就能看到新图。
+      </p>
+    </div>
+    <div class="reveal rounded-4xl border border-paper/10 bg-card/60 p-8" style="animation-delay:.25s">
+      <p class="font-display text-[44px] leading-none text-paper/25">03</p>
+      <h3 class="mt-6 text-[16px] font-medium text-paper">收下选中清单</h3>
+      <p class="mt-3 text-[13.5px] font-light leading-[1.8] text-paper/55">
+        客户点选喜欢的照片，你实时看到数量，结束后导出文件名清单，直接进入修图流程。
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="tool" class="border-y border-paper/10 bg-cta">
+  <div class="mx-auto max-w-[1180px] px-6 py-20 md:px-10 md:py-24">
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="rounded-4xl bg-card p-8 md:p-12">
+        <p class="font-display text-[clamp(56px,7vw,88px)] leading-none text-paper">0<span class="ml-2 text-[26px] text-paper/50">元</span></p>
+        <p class="mt-5 max-w-[420px] text-[13.5px] font-light leading-[1.85] text-paper/55">
+          内测阶段不收费。先把“上传—展示—挑片—导出”这条闭环跑顺，再谈套餐与容量。
+        </p>
+        <dl class="mt-10">
+          <div class="flex items-center justify-between border-t border-paper/10 py-3">
+            <dt class="w-[190px] flex-none text-[13px] text-paper/45">客户安装</dt>
+            <dd class="text-right text-[13px] font-medium text-paper">不需要</dd>
+          </div>
+          <div class="flex items-center justify-between border-t border-paper/10 py-3">
+            <dt class="w-[190px] flex-none text-[13px] text-paper/45">客户注册</dt>
+            <dd class="text-right text-[13px] font-medium text-paper">不需要</dd>
+          </div>
+          <div class="flex items-center justify-between border-t border-paper/10 py-3">
+            <dt class="w-[190px] flex-none text-[13px] text-paper/45">挑片方式</dt>
+            <dd class="text-right text-[13px] font-medium text-paper">点一下</dd>
+          </div>
+          <div class="flex items-center justify-between border-t border-paper/10 py-3">
+            <dt class="w-[190px] flex-none text-[13px] text-paper/45">交付物</dt>
+            <dd class="text-right text-[13px] font-medium text-paper">原始文件名清单</dd>
+          </div>
+        </dl>
+        <a href="/login" class="btn-quiet mt-8">现在就开始 →</a>
+      </div>
+
+      <div class="relative overflow-hidden rounded-4xl border border-paper/10 bg-[#101116] p-8 md:p-12">
+        <div class="absolute inset-0" style="background:
+            radial-gradient(70% 60% at 75% 20%, rgba(196,142,88,.18) 0%, rgba(16,17,22,0) 60%),
+            radial-gradient(60% 60% at 20% 85%, rgba(84,116,168,.22) 0%, rgba(16,17,22,0) 65%);"></div>
+        <div class="relative">
+          <p class="text-[11px] tracking-[0.28em] text-paper/40">CLIENT VIEW</p>
+          <h3 class="font-display mt-4 text-[clamp(28px,3.6vw,42px)] leading-[1.2] text-paper">
+            客户看到的，<br>只有照片和一次点击。
+          </h3>
+          <p class="mt-4 max-w-[380px] text-[13.5px] font-light leading-[1.85] text-paper/55">
+            没有下载客户端，没有注册流程，没有“第几张”的来回确认。拍照结束后，挑片已经完成了一半。
+          </p>
+          <div class="mt-10 grid grid-cols-3 gap-2.5">
+            <div class="aspect-[3/4] rounded-2xl" style="background:linear-gradient(150deg,#3d4f5c,#1b2530)"></div>
+            <div class="aspect-[3/4] rounded-2xl" style="background:linear-gradient(150deg,#6b5a48,#2a211a)"></div>
+            <div class="aspect-[3/4] rounded-2xl" style="background:linear-gradient(150deg,#4a5566,#20252f)"></div>
+            <div class="aspect-[3/4] rounded-2xl" style="background:linear-gradient(150deg,#2f4a45,#16201e)"></div>
+            <div class="aspect-[3/4] rounded-2xl" style="background:linear-gradient(150deg,#5a4a5e,#221b26)"></div>
+            <div class="aspect-[3/4] rounded-2xl" style="background:linear-gradient(150deg,#4d4b3c,#1f1e17)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="start" class="relative overflow-hidden bg-cta">
+  <div class="absolute inset-0" style="background:
+      radial-gradient(90% 80% at 50% 0%, rgba(88,112,170,.24) 0%, rgba(5,7,15,0) 62%),
+      radial-gradient(70% 60% at 50% 100%, rgba(196,142,88,.16) 0%, rgba(5,7,15,0) 60%);"></div>
+  <div class="relative mx-auto flex max-w-[760px] flex-col items-center px-6 py-24 text-center md:py-32">
+    <h2 class="font-display text-[clamp(36px,5.2vw,64px)] leading-[1.15] text-paper">把等待，留给风景。</h2>
+    <p class="mt-6 max-w-[520px] text-[14.5px] font-light leading-[1.85] text-paper/60">
+      下一场拍摄，试着让客户在回程路上就把照片挑完。
+    </p>
+    <a href="{{if .User}}/admin{{else}}/login{{end}}" class="btn-primary mt-9">
+      开始使用
+      <svg width="17" height="10" viewBox="0 0 17 10" fill="none" aria-hidden="true">
+        <path d="M11.6 1 L15.8 5 L11.6 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M15.4 5 H0.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </a>
+  </div>
+  <div class="relative border-t border-paper/10">
+    <div class="mx-auto flex max-w-[1180px] flex-col items-center justify-between gap-3 px-6 py-7 text-[11.5px] tracking-[0.08em] text-paper/35 md:flex-row md:px-10">
+      <span class="font-display text-[15px] tracking-[0.14em] text-paper/55">PHOTOLIVE</span>
+      <span>照片现场交付 · 客户免注册挑片</span>
+    </div>
+  </div>
+</section>
+{{end}}

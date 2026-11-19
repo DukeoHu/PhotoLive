@@ -1,0 +1,136 @@
+{{define "content"}}
+{{if .Missing}}
+<div class="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+  <p class="text-[11px] tracking-[0.3em] text-paper/40">PHOTOLIVE</p>
+  <h1 class="font-display mt-6 text-[42px] text-paper">房间已失效</h1>
+  <p class="mt-4 max-w-[360px] text-[13.5px] font-light leading-[1.8] text-paper/45">
+    这个房间已被删除或链接不正确，请联系摄影师重新获取。
+  </p>
+  <a href="/" class="btn-ghost mt-8">返回首页</a>
+</div>
+{{else}}
+
+{{if .Gate}}
+<div class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6">
+  <div class="absolute inset-0" style="background:
+      radial-gradient(90% 70% at 50% 0%, rgba(84,116,168,.30) 0%, rgba(7,7,10,0) 60%),
+      radial-gradient(70% 60% at 50% 100%, rgba(196,142,88,.16) 0%, rgba(7,7,10,0) 62%);"></div>
+  <div class="relative w-full max-w-[380px] text-center">
+    <p class="text-[10.5px] tracking-[0.32em] text-paper/40">PRIVATE GALLERY</p>
+    <h1 class="font-display mt-4 text-[38px] leading-tight text-paper">{{.Room.Name}}</h1>
+    <p class="mt-3 text-[13px] font-light text-paper/45">{{.Room.EventDate}} · 输入访问码查看现场照片</p>
+
+    <form id="gateForm" class="mt-9">
+      <input id="codeInput" inputmode="numeric" autocomplete="one-time-code" maxlength="8"
+             class="field text-center font-mono text-[24px] tracking-[0.4em]" placeholder="••••••" required>
+      <p id="gateError" class="mt-3 hidden text-[12.5px] text-red-200/85"></p>
+      <button type="submit" id="gateBtn" class="btn-primary mt-5 w-full !py-3.5">进入相册</button>
+    </form>
+    <p class="mt-7 text-[11px] text-paper/25">访问码由摄影师提供 · 无需注册</p>
+  </div>
+</div>
+{{else}}
+
+<div class="min-h-screen bg-ink pb-24" id="guestApp"
+     data-code="{{.Code}}"
+     data-status="{{.Room.Status}}"
+     data-allow-download="{{.Room.AllowDownload}}">
+  <header class="sticky top-0 z-30 border-b border-paper/10 bg-ink/85 backdrop-blur-xl">
+    <div class="mx-auto flex h-[68px] max-w-[1500px] items-center justify-between gap-3 px-4 sm:px-8">
+      <div class="min-w-0">
+        <h1 class="font-display truncate text-[21px] leading-tight text-paper">{{.Room.Name}}</h1>
+        <p class="mt-0.5 text-[10.5px] tracking-[0.06em] text-paper/40">
+          {{.Room.EventDate}} · <span id="headerCount">{{.Room.PhotoCount}}</span> 张
+        </p>
+      </div>
+      <div class="flex flex-none items-center gap-2">
+        {{if and .Room.AllowGuestUpload (eq .Room.Status "live")}}
+        <button id="guestUploadBtn" class="btn-quiet !px-3 !py-2 text-[11.5px]" title="上传照片">＋ 上传</button>
+        {{end}}
+        <button id="sortBtn" class="btn-quiet !px-3 !py-2 text-[11.5px]" title="切换拍摄时间顺序">正序</button>
+        <button id="filterBtn" class="btn-quiet !px-4 !py-2 text-[11.5px]">只看已选</button>
+        <button id="refreshBtn" class="rounded-full border border-paper/12 p-2 text-paper/50 transition hover:text-paper" title="刷新">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M20 11a8 8 0 1 0-2.3 5.7" stroke-linecap="round"/><path d="M20 4v7h-7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    {{if ne .Room.Status "live"}}
+    <div class="border-t border-paper/10 bg-paper/[0.04] px-4 py-2 text-center text-[11.5px] text-paper/50">
+      活动已结束，仅供查看与下载
+    </div>
+    {{end}}
+  </header>
+
+  <main class="mx-auto max-w-[1500px] px-3 pt-3 sm:px-8 sm:pt-5">
+    <input id="guestFileInput" type="file" multiple accept="image/jpeg,image/png,image/webp,.heic,.heif" class="hidden">
+    <div id="gallery"></div>
+
+    <div id="emptyState" class="hidden py-28 text-center">
+      <p class="font-display text-[26px] text-paper/60">摄影师正在上传照片</p>
+      <p class="mt-3 text-[12.5px] text-paper/35">照片会实时出现在这里，可以先不关闭页面。</p>
+    </div>
+
+    <div id="skeleton" class="masonry columns-2 sm:columns-3 lg:columns-4 xl:columns-5">
+      <div class="skeleton h-[220px] rounded-2xl"></div>
+      <div class="skeleton h-[280px] rounded-2xl"></div>
+      <div class="skeleton h-[190px] rounded-2xl"></div>
+      <div class="skeleton h-[240px] rounded-2xl"></div>
+    </div>
+  </main>
+
+  <div id="newPhotos" class="pointer-events-none fixed left-1/2 top-[84px] z-40 hidden -translate-x-1/2">
+    <button class="pointer-events-auto rounded-full bg-paper px-4 py-2 text-[11.5px] font-medium text-ink shadow-lg">
+      ↑ <span id="newCount">0</span> 张新照片
+    </button>
+  </div>
+
+  <div class="fixed inset-x-0 bottom-0 z-30 border-t border-paper/10 bg-ink/90 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-4 py-3 sm:px-8"
+         style="padding-bottom:calc(0.75rem + env(safe-area-inset-bottom));">
+      <div class="text-[12.5px] text-paper/55">
+        已选 <b class="font-display text-[22px] text-paper" id="selectedCount">{{.Selected}}</b>
+        <span class="text-paper/35">/ 共 <span id="totalCount">{{.Room.PhotoCount}}</span></span>
+      </div>
+      <button id="downloadBtn" class="btn-primary !py-2.5 !text-[12px]" {{if not .Room.AllowDownload}}style="display:none"{{end}}>
+        下载已选
+        <svg width="15" height="9" viewBox="0 0 17 10" fill="none"><path d="M11.6 1 L15.8 5 L11.6 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.4 5 H0.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 全屏预览 -->
+  <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/95">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center justify-between px-4 py-3 text-paper/70">
+        <span class="text-[11.5px] tracking-[0.08em]" id="lightboxIndex">1 / 1</span>
+        <button id="closeLightbox" class="rounded-full p-2 hover:bg-paper/10">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="relative flex flex-1 items-center justify-center overflow-hidden px-2">
+        <button id="prevPhoto" class="absolute left-2 z-10 rounded-full bg-white/10 p-3 text-white/80 backdrop-blur hover:bg-white/20">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <img id="lightboxImg" src="" alt="" class="max-h-full max-w-full rounded-lg object-contain">
+        <button id="nextPhoto" class="absolute right-2 z-10 rounded-full bg-white/10 p-3 text-white/80 backdrop-blur hover:bg-white/20">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="flex items-center justify-between px-4 py-4" style="padding-bottom:calc(1rem + env(safe-area-inset-bottom));">
+        <p class="max-w-[60%] truncate text-[11px] text-paper/40" id="lightboxName"></p>
+        <button id="lightboxSelect" class="rounded-full border border-paper/25 px-5 py-2 text-[12px] text-paper">选中这张</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="pointer-events-none fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full bg-paper px-4 py-2 text-[12px] font-medium text-ink opacity-0 transition-all duration-300"></div>
+</div>
+{{end}}
+{{end}}
+{{end}}
+
+{{define "scripts"}}
+<script src="/static/guest.js"></script>
+{{end}}

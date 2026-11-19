@@ -1,0 +1,644 @@
+照片部分UI借鉴：You are given a task to integrate an existing React component in the codebase
+
+~~~/README.md
+# MasonryGallery
+
+A high-performance, GSAP-powered Masonry layout component designed for cinematic entrances and fluid interactions.
+
+## Dependencies
+- react: ^18.2.0
+- gsap: ^3.12.5
+- lucide-react: ^0.344.0
+- clsx: ^2.1.0
+- tailwind-merge: ^2.2.1
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `MasonryItem[]` | Required | Array of items with `id`, `img`, `height`, and optional `url`/`title`. |
+| `ease` | `string` | `'power3.out'` | GSAP easing function for animations. |
+| `duration` | `number` | `0.6` | Duration of layout update animations. |
+| `stagger` | `number` | `0.05` | Delay between consecutive item entry animations. |
+| `animateFrom` | `'bottom' \| 'top' \| 'left' \| 'right' \| 'center' \| 'random'` | `'bottom'` | Initial entrance direction. |
+| `scaleOnHover` | `boolean` | `true` | Whether to scale items on mouse enter. |
+| `hoverScale` | `number` | `0.95` | Scale value applied on hover. |
+| `blurToFocus` | `boolean` | `true` | Cinematic blur-to-sharp transition on entrance. |
+| `colorShiftOnHover` | `boolean` | `false` | Apply a gradient overlay on hover. |
+| `className` | `string` | `undefined` | Container CSS classes. |
+
+## Usage
+
+```tsx
+import { MasonryGallery } from '@/sd-components/c249f88a-7efa-478f-8560-cbb667c81f39';
+
+const items = [
+  { id: '1', img: 'https://...', height: 400, title: 'Project One' },
+  { id: '2', img: 'https://...', height: 250, title: 'Project Two' },
+];
+
+export default function GalleryDemo() {
+  return (
+    <MasonryGallery 
+      items={items}
+      animateFrom="bottom"
+      blurToFocus={true}
+      stagger={0.1}
+    />
+  );
+}
+```
+~~~
+
+~~~/src/App.tsx
+import React, { useState } from 'react';
+import MasonryGallery, { MasonryItem } from './Component';
+import { RefreshCw } from 'lucide-react';
+
+const INITIAL_ITEMS: MasonryItem[] = [
+  { id: '1', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=600', height: 400, title: 'Mountain Lake' },
+  { id: '2', img: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&q=80&w=600', height: 250, title: 'Alpine Meadow' },
+  { id: '3', img: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=600', height: 600, title: 'Forest Trail' },
+  { id: '4', img: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=600', height: 350, title: 'Coastal Cliffs' },
+  { id: '5', img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&q=80&w=600', height: 500, title: 'Desert Dunes' },
+  { id: '6', img: 'https://images.unsplash.com/photo-1500673922987-e212871fec22?auto=format&fit=crop&q=80&w=600', height: 300, title: 'Northern Lights' },
+  { id: '7', img: 'https://images.unsplash.com/photo-1426604966848-d7adac402bdb?auto=format&fit=crop&q=80&w=600', height: 450, title: 'Rocky Falls' },
+  { id: '8', img: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80&w=600', height: 280, title: 'Green Hills' },
+  { id: '9', img: 'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?auto=format&fit=crop&q=80&w=600', height: 550, title: 'Sunrise Peak' },
+  { id: '10', img: 'https://images.unsplash.com/photo-1493246507139-91e8bef99c02?auto=format&fit=crop&q=80&w=600', height: 320, title: 'Sunset Valley' },
+];
+
+export default function App() {
+  const [items, setItems] = useState(INITIAL_ITEMS);
+  const [key, setKey] = useState(0);
+
+  const handleRefresh = () => {
+    // Shuffle and trigger re-mount for animation demo
+    const shuffled = [...INITIAL_ITEMS].sort(() => Math.random() - 0.5);
+    setItems(shuffled);
+    setKey(prev => prev + 1);
+  };
+
+  return (
+    <main className="min-h-screen bg-background p-20 flex flex-col items-center">
+      <div className="w-full max-w-7xl relative">
+        <h1 className="text-foreground text-3xl font-medium tracking-tight mb-12 text-center">
+          Masonry Gallery
+        </h1>
+        
+        <MasonryGallery 
+          key={key}
+          items={items}
+          animateFrom="bottom"
+          blurToFocus={true}
+          stagger={0.08}
+          scaleOnHover={true}
+          hoverScale={0.96}
+          colorShiftOnHover={true}
+        />
+
+        <button
+          onClick={handleRefresh}
+          className="fixed bottom-10 right-10 z-50 p-4 bg-primary text-primary-foreground rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all group"
+          title="Re-animate Gallery"
+        >
+          <RefreshCw className="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" />
+        </button>
+      </div>
+    </main>
+  );
+}
+~~~
+
+~~~/package.json
+{
+  "name": "masonry-gallery",
+  "description": "A high-performance GSAP-powered Masonry gallery component",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "gsap": "^3.12.5",
+    "lucide-react": "^0.344.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.1"
+  }
+}
+~~~
+
+~~~/src/Component.tsx
+/**
+ * MasonryGallery - A high-performance, GSAP-powered Masonry layout component.
+ * Features:
+ * - Responsive column mapping
+ * - GSAP animations for entry and updates
+ * - Blur-to-focus and directional entrance effects
+ * - Interactive hover states (scale, color shift)
+ * - Automatic image preloading for smooth layout calculations
+ */
+
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+/** Utility for Tailwind class merging */
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+/** Hook to handle media queries for responsive columns */
+const useMedia = (queries: string[], values: number[], defaultValue: number): number => {
+  const get = () => {
+    if (typeof window === 'undefined') return defaultValue;
+    const match = queries.findIndex(q => window.matchMedia(q).matches);
+    return values[match] !== undefined ? values[match] : defaultValue;
+  };
+
+  const [value, setValue] = useState<number>(get);
+
+  useEffect(() => {
+    const handler = () => setValue(get);
+    queries.forEach(q => window.matchMedia(q).addEventListener('change', handler));
+    return () => queries.forEach(q => window.matchMedia(q).removeEventListener('change', handler));
+  }, [queries]);
+
+  return value;
+};
+
+/** Hook to measure element size via ResizeObserver */
+const useMeasure = <T extends HTMLElement>() => {
+  const ref = useRef<T | null>(null);
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  useLayoutEffect(() => {
+    if (!ref.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      setSize({ width, height });
+    });
+    ro.observe(ref.current);
+    return () => ro.disconnect();
+  }, []);
+
+  return [ref, size] as const;
+};
+
+/** Utility to ensure images are loaded before layout/animation */
+const preloadImages = async (urls: string[]): Promise<void> => {
+  await Promise.all(
+    urls.map(
+      src =>
+        new Promise<void>(resolve => {
+          const img = new Image();
+          img.src = src;
+          img.onload = img.onerror = () => resolve();
+        })
+    )
+  );
+};
+
+export interface MasonryItem {
+  id: string;
+  img: string;
+  url?: string;
+  height: number;
+  title?: string;
+}
+
+interface GridItem extends MasonryItem {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface MasonryGalleryProps {
+  /** Array of items to display in the gallery */
+  items: MasonryItem[];
+  /** GSAP easing function */
+  ease?: string;
+  /** Duration of movement animations */
+  duration?: number;
+  /** Stagger delay between item animations */
+  stagger?: number;
+  /** Direction from which items enter the screen */
+  animateFrom?: 'bottom' | 'top' | 'left' | 'right' | 'center' | 'random';
+  /** Whether to scale items down on hover */
+  scaleOnHover?: boolean;
+  /** Scale factor for hover state */
+  hoverScale?: number;
+  /** Whether to apply a blur-to-focus entry effect */
+  blurToFocus?: boolean;
+  /** Whether to show a color overlay on hover */
+  colorShiftOnHover?: boolean;
+  /** CSS class for the container */
+  className?: string;
+  /** CSS class for individual item containers */
+  itemClassName?: string;
+}
+
+export const MasonryGallery: React.FC<MasonryGalleryProps> = ({
+  items,
+  ease = 'power3.out',
+  duration = 0.6,
+  stagger = 0.05,
+  animateFrom = 'bottom',
+  scaleOnHover = true,
+  hoverScale = 0.95,
+  blurToFocus = true,
+  colorShiftOnHover = false,
+  className,
+  itemClassName
+}) => {
+  const columns = useMedia(
+    ['(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)', '(min-width: 400px)'],
+    [5, 4, 3, 2],
+    1
+  );
+
+  const [containerRef, { width }] = useMeasure<HTMLDivElement>();
+  const [imagesReady, setImagesReady] = useState(false);
+  const hasMounted = useRef(false);
+
+  // Initial animation calculations
+  const getInitialPosition = (item: GridItem) => {
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    if (!containerRect) return { x: item.x, y: item.y };
+
+    let direction = animateFrom;
+    if (animateFrom === 'random') {
+      const dirs = ['top', 'bottom', 'left', 'right'];
+      direction = dirs[Math.floor(Math.random() * dirs.length)] as any;
+    }
+
+    switch (direction) {
+      case 'top': return { x: item.x, y: -200 };
+      case 'bottom': return { x: item.x, y: window.innerHeight + 200 };
+      case 'left': return { x: -200, y: item.y };
+      case 'right': return { x: window.innerWidth + 200, y: item.y };
+      case 'center': return {
+        x: containerRect.width / 2 - item.w / 2,
+        y: containerRect.height / 2 - item.h / 2
+      };
+      default: return { x: item.x, y: item.y + 100 };
+    }
+  };
+
+  // Preload logic
+  useEffect(() => {
+    preloadImages(items.map(i => i.img)).then(() => setImagesReady(true));
+  }, [items]);
+
+  // Layout calculation
+  const { grid, containerHeight } = useMemo(() => {
+    if (!width) return { grid: [] as GridItem[], containerHeight: 0 };
+
+    const colHeights = new Array(columns).fill(0);
+    const gap = 24; // Increased gap for premium feel
+    const totalGaps = (columns - 1) * gap;
+    const columnWidth = (width - totalGaps) / columns;
+
+    const gridItems = items.map(child => {
+      const col = colHeights.indexOf(Math.min(...colHeights));
+      const x = col * (columnWidth + gap);
+      const height = (child.height / 400) * columnWidth; // Maintain aspect ratio roughly
+      const y = colHeights[col];
+      colHeights[col] += height + gap;
+      return { ...child, x, y, w: columnWidth, h: height };
+    });
+
+    return { grid: gridItems, containerHeight: Math.max(...colHeights) };
+  }, [columns, items, width]);
+
+  // Animation logic
+  useLayoutEffect(() => {
+    if (!imagesReady || !grid.length) return;
+
+    grid.forEach((item, index) => {
+      const element = document.querySelector(`[data-key="${item.id}"]`);
+      if (!element) return;
+
+      const animProps = { x: item.x, y: item.y, width: item.w, height: item.h };
+
+      if (!hasMounted.current) {
+        const start = getInitialPosition(item);
+        gsap.fromTo(
+          element,
+          {
+            opacity: 0,
+            x: start.x,
+            y: start.y,
+            width: item.w,
+            height: item.h,
+            ...(blurToFocus && { filter: 'blur(20px)' })
+          },
+          {
+            opacity: 1,
+            ...animProps,
+            ...(blurToFocus && { filter: 'blur(0px)' }),
+            duration: 1.2,
+            ease: 'power3.out',
+            delay: index * stagger
+          }
+        );
+      } else {
+        gsap.to(element, {
+          ...animProps,
+          duration,
+          ease,
+          overwrite: 'auto'
+        });
+      }
+    });
+
+    if (grid.length > 0) hasMounted.current = true;
+  }, [grid, imagesReady, stagger, animateFrom, blurToFocus, duration, ease]);
+
+  const handleMouseEnter = (id: string, element: HTMLElement) => {
+    if (scaleOnHover) {
+      gsap.to(element, {
+        scale: hoverScale,
+        duration: 0.4,
+        ease: 'power2.out'
+      });
+    }
+    if (colorShiftOnHover) {
+      const overlay = element.querySelector('.color-overlay');
+      if (overlay) gsap.to(overlay, { opacity: 0.3, duration: 0.4 });
+    }
+  };
+
+  const handleMouseLeave = (id: string, element: HTMLElement) => {
+    if (scaleOnHover) {
+      gsap.to(element, {
+        scale: 1,
+        duration: 0.4,
+        ease: 'power2.out'
+      });
+    }
+    if (colorShiftOnHover) {
+      const overlay = element.querySelector('.color-overlay');
+      if (overlay) gsap.to(overlay, { opacity: 0, duration: 0.4 });
+    }
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className={cn('relative w-full', className)}
+      style={{ height: containerHeight, minHeight: '400px' }}
+    >
+      {grid.map(item => (
+        <div
+          key={item.id}
+          data-key={item.id}
+          className={cn(
+            'absolute overflow-hidden cursor-pointer rounded-xl transition-shadow hover:shadow-2xl',
+            itemClassName
+          )}
+          style={{
+            willChange: 'transform, width, height, opacity, filter',
+            boxShadow: '0 10px 30px -10px rgba(0,0,0,0.1)'
+          }}
+          onClick={() => item.url && window.open(item.url, '_blank', 'noopener')}
+          onMouseEnter={e => handleMouseEnter(item.id, e.currentTarget)}
+          onMouseLeave={e => handleMouseLeave(item.id, e.currentTarget)}
+        >
+          <div
+            className="w-full h-full bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${item.img})` }}
+          >
+            {colorShiftOnHover && (
+              <div className="color-overlay absolute inset-0 bg-gradient-to-tr from-primary/40 to-accent/40 opacity-0 pointer-events-none transition-opacity" />
+            )}
+          </div>
+          {item.title && (
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <p className="text-white text-xs font-medium uppercase tracking-wider">{item.title}</p>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default MasonryGallery;
+~~~
+
+Implementation Guidelines
+
+1. Analyze the component structure, styling, animation implementations
+2. Review the component's arguments and state
+3. Think through what is the best place to adopt this component/style into the design we are doing
+4. Then adopt the component/design to our current system
+
+Help me integrate this into my design
+
+
+
+整体UI设计借鉴：# Summary
+
+A cinematic, luxury editorial layout featuring deep navy and ink backgrounds, off-white 'Paper' typography, and high-contrast display serif headings. 
+
+# Style
+
+The style is defined by a high-contrast relationship between deep backgrounds and a soft-white (#F8F6F3) palette. Typography uses a pairing of 'Instrument Serif' (400 weight) for an editorial feel and 'Inter' (300-600 weight) for technical details. Key visual markers include large radius corners (80px), glass-style nav pills, and tight, specific vertical rhythms for technical data rows.
+
+## Spec
+
+Build a single landing page for Encore One, a pair of wireless over-ear headphones.
+Produce it as one static index.html file with an embedded <style> block and inline SVG —
+no build step, no framework, no CSS library. (If you need React + Tailwind instead, keep
+every value below identical and use arbitrary-value classes such as text-[96px].)
+
+This is a reproduction of an approved design, not a design exercise. Every number below is
+a measured value. Do not redesign, restyle, simplify, round numbers, add sections, add a
+footer, or "improve" anything.
+
+## Canvas
+Fixed 1440px wide, 2749px tall total. Not responsive — no media queries, no breakpoints.
+Three stacked sections: hero 1030px, feature 913px, closing CTA 806px.
+
+## Fonts
+Load from Google Fonts, nothing else:
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+- Instrument Serif 400 — every display element (headlines, the price, the wordmark)
+- Inter 300/400/500/600 — everything else
+No third family. Set -webkit-font-smoothing:antialiased and font-synthesis:none on body.
+
+## Colour
+--hero-ground  #0D1330   hero frame fill, behind the photograph
+--ink          #07070A   feature section ground
+--cta-ground   #05070F   closing section ground, behind the photograph
+--card         #202023   raised card surface
+--dark         #0E0F12   type on a light ground
+--paper        #F8F6F3   type on a dark ground
+
+Everything else is one of those two neutrals at an alpha step, written as 8-digit hex:
+#F8F6F3D9 (nav links, hero lede) · #F8F6F3D1 (nav price) · #F8F6F3A8 (card body) ·
+#F8F6F385 (spec labels) · #F8F6F36B and #F5F2EE6B (ghost/nav borders) ·
+#F8F6F338 (quiet button border) · #F8F6F31A (spec rules) · #F5F2EE52 (nav divider) ·
+#0E0F12B8 (CTA lede) · #0A0E1438 and #0A0E143D (translucent fills) ·
+#080C1414 (the one shadow).
+
+No third hue. Never use #FFFFFF or `white` — the light neutral is always #F8F6F3.
+The only gradient in the design is the hero scrim.
+
+## Images
+Use these exact URLs. They are public and require no auth. Do not substitute stock,
+illustration or AI-generated imagery, and do not crop them differently.
+
+Hero background — background-size:cover; background-position:50%
+https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/7d063711-6e4f-4d0c-bed8-33a2d8f2ccb0/external-assets/0147fd01-798c-42e3-a222-1c89c3ac7559-hero-photo.png
+
+Feature card square — background-size:cover; background-position:50%
+https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/7d063711-6e4f-4d0c-bed8-33a2d8f2ccb0/external-assets/fb019c6e-c8d1-4f8e-a353-b0a1f88a4dee-card-photo.png
+
+Closing CTA background — background-size:cover; background-position:50% 78.713%
+https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/7d063711-6e4f-4d0c-bed8-33a2d8f2ccb0/external-assets/e4a52ad3-289c-4bf3-aef6-fc395c4afaf3-cta-photo.png
+
+That 78.713% is not a typo and not roundable — it is what places the horizon low and the
+headphones centre-bottom.
+
+## Section 1 — Hero (1030px)
+Frame: 1440×1030, fill #0D1330, border-radius: 0 0 80px 80px with overflow:clip,
+position:relative, flex column, centred. The bottom radius is what curves the photograph
+away from the black section below — it is easy to miss and very visible.
+
+Three stacked layers:
+1. Photograph — position:absolute; inset:0, 1440×1030, cover, position 50%.
+2. Scrim — position:absolute; top:0, 1440×700 only (not full height, so it fades out above
+   the fold):
+   linear-gradient(180deg, rgba(6,10,20,.62) 0%, rgba(6,10,20,.34) 46%, rgba(6,10,20,.10) 78%, rgba(6,10,20,0) 100%)
+3. Nav — position:absolute; top:0; left:0, 1440×88, padding-inline:64px,
+   justify-content:space-between, align-items:center, z-index:3. Not sticky, not fixed.
+   - Wordmark: 10px gap — a 7×7 circle, #F5F2EE at opacity:.85, then ENCORE in Instrument
+     Serif 21px/26px, letter-spacing:.06em, #F8F6F3. Text, not an image.
+   - Menu: 38px gap — Home, Sound, Fit, Journal, Support. Inter 400 13px/16px,
+     letter-spacing:.1em, #F8F6F3D9, sentence case (not uppercase).
+   - Buy pill: fill #0A0E1438, 1px #F5F2EE6B border, radius 100px, padding 11px 22px,
+     10px gap — BUY (Inter 500 12px/16px, .1em, #F8F6F3), a 1×12px #F5F2EE52 divider,
+     then $349 (Inter 400 12px/16px, .1em, #F8F6F3D1).
+
+Copy block — position:relative, width 1440, padding-top:158px, flex column, centred:
+- <h1> Close your eyes. Go anywhere. — Instrument Serif 96px/104px, letter-spacing:-.015em,
+  #F8F6F3, centred. One single line. Add white-space:nowrap. Do not insert a <br>; it must
+  not wrap.
+- Lede wrapper 620px wide, padding-top:12px. Text: Inter 300 15px/27px, #F8F6F3D9, centred —
+  "Wireless over-ear headphones tuned for long listening. Adaptive silence, sixty hours of
+  play, and a fit light enough to forget."
+- Button row, padding-top:48px, 16px gap: filled "Shop Encore One" + ghost "Book a listen".
+
+## Section 2 — Feature (913px)
+Background #07070A, padding: 80px 0 100px, flex column, centred.
+- <h2> So everything else can wait. — Instrument Serif 72px/78px, -.015em, #F8F6F3, centred.
+- Row: width 1240px, padding-top:48px, display:flex, gap:26px. Two 607×607 blocks, both
+  border-radius:36px, both flex-shrink:0.
+
+Left block — fill #202023, padding:56px, flex column, align-items:flex-start:
+- $399 — Instrument Serif 104px/104px, -.015em, #F8F6F3.
+- Body wrapper 430px wide, padding-top:22px. Inter 300 15px/27px, #F8F6F3A8 — "Memory foam
+  and lambskin on a spring-steel frame. Most people forget they're wearing them by the
+  second song."
+- Spec list — 495px wide, padding-top:75px, flex column. Four rows, each: 495px wide,
+  justify-content:space-between, align-items:center, padding-block:12px, and a 1px #F8F6F31A
+  top border (top only; the group has no bottom rule).
+  - Label: fixed width:300px, flex-shrink:0, Inter 400 13px/16px, #F8F6F385. The fixed lane
+    is what lands every value on the same right-hand rule.
+  - Value: Inter 500 13px/16px, #F8F6F3, right-aligned.
+  - Rows: Clamping force / 4.2 N · Earpads / Lambskin memory foam ·
+    Headband / Spring steel · Playtime / 60 hours
+  - Each row must compute to exactly 30px tall (12 + 16 + 12). Set line-height:16px
+    explicitly on both label and value — inherited leading makes them 33px and throws the
+    card's internal rhythm off.
+- Button, padding-top:28px: quiet "Explore the Encore One".
+
+Right block — the feature photograph, cover, 50%, no padding.
+
+## Section 3 — Closing CTA (806px)
+1440×806, fill #05070F, overflow:clip, padding-top:48px, position:relative, flex column,
+centred. Photograph absolute, cover, 50% 78.713%. No scrim — the image is light enough that
+the type flips dark instead.
+
+Copy column position:relative, 640px wide, flex column, centred:
+- <h2> Press play — Instrument Serif 72px/78px, -.015em, #0E0F12, centred.
+- Lede wrapper 530px, padding-top:28px. Inter 300 15px/27px, #0E0F12B8, centred — "Order
+  today with free two-day shipping and sixty days to live with them. If the quiet isn't
+  everything you hoped for, send them back and we'll cover the return."
+- Button wrapper padding-top:16px: filled "Shop Encore One".
+
+## Buttons
+All three: border-radius:100px, labels uppercase, letter-spacing:.1em, 13px/16px,
+display:flex, align-items:center.
+
+                Filled                    Ghost                  Quiet
+Fill            #F8F6F3                   #0A0E143D              none
+Border          none                      1px #F8F6F36B          1px #F8F6F338
+Label           #0E0F12, Inter 600        #F8F6F3, Inter 500     #F8F6F3, Inter 500
+Padding         19px 30px 19px 36px       18px 32px              15px 24px 15px 30px
+Gap             16px                      —                      14px
+Arrow           yes, 1.5 stroke #0E0F12   no arrow               yes, 1.4 stroke #F8F6F3
+Shadow          0 18px 46px #080C1414     none                   none
+
+The filled button's horizontal padding is deliberately asymmetric (36 left / 30 right) so
+the arrow doesn't sit too near the edge.
+
+Arrow glyph — 17×10, viewBox="0 0 17 10", fill="none", two stroked paths with round caps
+and joins:
+<svg width="17" height="10" viewBox="0 0 17 10" fill="none" aria-hidden="true">
+  <path d="M11.6 1 L15.8 5 L11.6 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15.4 5 H0.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
+
+## Elevation
+0 18px 46px #080C1414 on the filled button is the only shadow in the entire design.
+The cards have none. Do not add any.
+
+## Acceptance checks
+Before you call it done, verify each of these:
+1. Rendered page height is exactly 2749px at a 1440px viewport.
+2. The hero headline sits on one line.
+3. The string #FFFFFF / white appears nowhere in the CSS.
+4. Each spec row measures exactly 30px tall.
+5. The hero's two bottom corners are rounded 80px; the top corners are square.
+6. All three images load (HTTP 200) and are positioned as specified.
+7. Exactly one box-shadow declaration exists in the stylesheet.
+
+# Layout & Structure
+
+The layout follows a 1440px fixed-width container with a structured vertical flow: a cinematic hero section with bottom corner radii, followed by feature sections featuring bento-style cards and technical spec lists.
+
+## Header and Navigation
+
+Fixed 1440px width, 88px height. Left-aligned logo with a 7px dot (#F5F2EE, 85% opacity) followed by 'ENCORE' in 21px Instrument Serif. Center navigation links in 13px Inter, 0.1em tracking. Right-aligned 'Buy' pill: 40px height, glass background (#0A0E1438), border (#F5F2EE6B), containing price and action label separated by a vertical divider.
+
+## Hero Section
+
+1030px height, background #0D1330 with a top-down gradient scrim (rgba(6,10,20,0.62) to transparent). Bottom corners feature an 80px radius. Headline: 'Close your eyes. Go anywhere.' in 96px/104px Instrument Serif, forced to one line. Subtext: 620px wide container, 15px Inter, light weight, 27px leading. Primary CTA: Rounded white (#F8F6F3) button with 54px height, black text, and an arrow icon.
+
+## Feature Specification Section
+
+Background #07070A. Large display h2 (72px). Two-column grid (1240px wide). Left Card: 607px square, #202023 background, 36px corner radius, 56px padding. Includes a 104px Serif price/stat, a brief description, and a 4-row technical spec list. Right Card: Matching 607px square containing a full-bleed cinematic image.
+
+## Closing CTA
+
+806px height, background #05070F with a central focal-point image. Headline: 72px/78px Instrument Serif. Centered text block (530px wide). Call-to-action button (54px height) centered below the text.
+
+# Special Components
+
+## Technical Spec Rows
+
+Precision-aligned data rows for technical specifications.
+
+Construct rows within a definition list (dl). Each row: height 30px, border-top 1px solid #F8F6F31A. Labels (dt): 13px Inter, color #F8F6F385. Values (dd): 13px Inter, font-weight 500, color #F8F6F3. Vertical padding: 12px top and bottom; Line-height: 16px.
+
+## Glass Buy Pill
+
+A compact, high-contrast commerce trigger.
+
+Height: 40px. Background: #0A0E1438. Border: 1px solid #F5F2EE6B. Border-radius: 9999px. Padding: 0 22px. Content: Left-side bold label ('BUY'), 1px vertical divider (#F5F2EE52), right-side price in 12px Inter.
+
+# Special Notes
+
+MUST NOT use #FFFFFF; always use #F8F6F3 for primary highlights. HERO HEADLINE must stay on a single line regardless of screen size within the 1440px container. All SPEC ROWS must be precisely 30px tall (targeting 12px padding top/bottom with 16px line-height) and separated by 1px #F8F6F31A borders. Ensure font smoothing is set to antialiased for ultra-thin Inter weights.

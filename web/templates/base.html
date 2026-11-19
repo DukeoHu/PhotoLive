@@ -1,0 +1,42 @@
+{{define "base"}}<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07070A">
+  <title>{{.Title}} · PhotoLive</title>
+  <script src="/static/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#07070A',
+            navy: '#0D1330',
+            cta: '#05070F',
+            card: '#202023',
+            paper: '#F8F6F3'
+          },
+          fontFamily: {
+            serif: ['"Instrument Serif"', '"Noto Serif SC"', '"Songti SC"', '"STSong"', 'SimSun', 'serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"PingFang SC"', '"Microsoft YaHei"', 'sans-serif']
+          },
+          borderRadius: {
+            '4xl': '36px',
+            '5xl': '80px'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="bg-ink text-paper font-body min-h-screen antialiased">
+{{template "content" .}}
+<script src="/static/ui.js"></script>
+{{block "scripts" .}}{{end}}
+</body>
+</html>{{end}}

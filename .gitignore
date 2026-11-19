@@ -1,0 +1,25 @@
+# 运行数据与数据库
+/data/
+*.db
+*.db-shm
+*.db-wal
+
+# 构建产物
+/photolive
+/photolive.exe
+*.exe
+*.log
+
+# 环境变量
+.env
+.env.*
+
+# 编辑器与系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# 临时产物
+.screenshots/
+.trae-html-share-packages/
